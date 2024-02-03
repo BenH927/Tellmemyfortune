@@ -1,0 +1,225 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <style>
+        body {
+            font-family: 'Arial', sans-serif;
+            text-align: center;
+            padding: 20px;
+            overflow: hidden; /* Ensure the entire wheel is visible */
+        }
+
+        #wheel-container {
+            width: 100vw;
+            height: 100vh;
+            position: fixed;
+            top: 0;
+            left: 0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        #wheel {
+            width: 200px;
+            height: 200px;
+            border-radius: 50%;
+            cursor: pointer;
+            background-image: conic-gradient(
+                #ff0000 0% 15%,
+                #ff8000 15% 30%,
+                #ffff00 30% 45%,
+                #80ff00 45% 60%,
+                #00ff80 60% 75%,
+                #0080ff 75% 90%,
+                #8000ff 90% 100%
+            );
+            transition: transform 3s ease-out;
+        }
+
+        #wheel::before {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 200px;
+            height: 200px;
+            border-radius: 50%;
+            transform: translate(-50%, -50%);
+        }
+
+        #spinButton {
+            margin-top: 20px;
+            padding: 10px 20px;
+            font-size: 16px;
+            cursor: pointer;
+            background-image: conic-gradient(
+                #ff0000 0% 15%,
+                #ff8000 15% 30%,
+                #ffff00 30% 45%,
+                #80ff00 45% 60%,
+                #00ff80 60% 75%,
+                #0080ff 75% 90%,
+                #8000ff 90% 100%
+            );
+            color: white;
+            border: none;
+            border-radius: 8px;
+            outline: none;
+            transition: transform 3s ease-out;
+        }
+
+        #spinButton:hover {
+            transform: scale(1.1); /* Add a slight scale effect on hover */
+        }
+
+        #fortune {
+            margin-top: 20px;
+            font-size: 25px;
+        }
+    </style>
+</head>
+<body>
+
+<h1>Tell Me My Fortune!</h1>
+<div id="wheel-container">
+    <div id="wheel" onclick="spinWheel()"></div>
+</div>
+<button id="spinButton" onclick="spinWheel()">Please</button>
+<p id="fortune"></p>
+
+<script>
+    const fortunes = [
+      "Good luck is on your side.",
+    "A pleasant surprise awaits you.",
+    "Someone from your past will reach out to you.",
+    "A new opportunity will come your way.",
+    "You will learn something valuable today.",
+    "A friend will offer helpful advice.",
+    "Positive energy surrounds you.",
+    "You will find joy in simple pleasures.",
+    "Financial success is within reach.",
+    "Your hard work will pay off soon.",
+    "Love and laughter will fill your day.",
+    "Unexpected blessings are on the horizon.",
+    "A creative project will bring you satisfaction.",
+    "An important decision will lead to positive outcomes.",
+    "A setback is a setup for a comeback.",
+    "You will make a meaningful connection with someone new.",
+    "Today is a day for exploration and adventure.",
+    "Trust your instincts; they will guide you well.",
+    "Patience is a virtue; good things come to those who wait.",
+    "A solution to a long-standing problem is within reach.",
+    "Kindness will be repaid to you in unexpected ways.",
+    "Your unique talents will shine brightly today.",
+    "A moment of reflection will bring clarity.",
+    "Embrace change; it will lead to personal growth.",
+    "Your enthusiasm will inspire those around you.",
+    "An old friend will bring joy and nostalgia.",
+    "Celebrate the small victories in life.",
+    "Your generosity will be appreciated by others.",
+    "A positive attitude will attract positive outcomes.",
+    "You are on the right path to success.",
+    "Open your heart to love; new connections are forming.",
+    "Take a moment to relax and recharge.",
+    "A peaceful resolution to a conflict is possible.",
+    "You have the strength to overcome any challenge.",
+    "Express your creativity; it will be well-received.",
+    "An exciting opportunity for travel is coming your way.",
+    "Share your knowledge; it will benefit others.",
+    "Believe in yourself, and others will too.",
+    "A mentor will offer guidance when you need it most.",
+    "Your intuition will lead you to great insights.",
+    "Your kindness will create a ripple effect of positivity.",
+    "A loved one will make your day brighter.",
+    "The universe is conspiring to bring you happiness.",
+    "A positive change in your routine will bring joy.",
+    "You are surrounded by supportive and loving energy.",
+    "Seize the day; it's full of new possibilities.",
+    "A goal you've been working towards is within reach.",
+    "Be open to new experiences; they will broaden your horizons.",
+    "Your determination will lead to success.",
+    "Treasure the present moment; it holds the key to your future.",
+    "Your unique perspective will bring innovation.",
+    "Listen to your heart; it knows the way.",
+    "Your efforts will be acknowledged and rewarded.",
+    "Embrace challenges as opportunities for growth.",
+    "Your positive mindset will attract positive outcomes.",
+    "A wave of good luck is coming your way.",
+    "Take a leap of faith; the net will appear.",
+    "A new friendship will bring joy and companionship.",
+    "Your resilience will overcome any obstacles.",
+    "Seeds of hard work will blossom into success.",
+    "A chance encounter will lead to meaningful connections.",
+    "You are capable of achieving greatness.",
+    "Trust in the timing of your life's journey.",
+    "Your presence brings joy to those around you.",
+    "A hidden talent will be discovered and celebrated.",
+    "You are a magnet for prosperity and abundance.",
+    "A period of growth and renewal is beginning.",
+    "The universe is aligning to fulfill your desires.",
+    "Your positive energy will inspire positive changes.",
+    "An exciting adventure is on the horizon.",
+    "Your dreams are within reach; pursue them with passion.",
+    "Your inner strength will guide you through challenges.",
+    "Take time for self-care; it will rejuvenate your spirit.",
+    "Your potential is limitless; believe in yourself.",
+    "A new beginning is unfolding; embrace the possibilities.",
+    "You will receive unexpected recognition for your efforts.",
+    "A moment of clarity will lead to a breakthrough.",
+    "Your kindness will be repaid tenfold.",
+    "Trust the journey, even when you do not understand it.",
+    "Your positive attitude will attract success.",
+    "A positive change in your environment will bring joy.",
+    "You are a beacon of light in the lives of others.",
+    "Celebrate your accomplishments, no matter how small.",
+    "A cherished goal is within reach; keep going.",
+    "Your inner wisdom will guide you to the right path.",
+    "Express gratitude for the abundance in your life.",
+    "A new chapter is beginning; write it with intention.",
+    "You are a source of inspiration for others.",
+    "Believe in the magic within you; it will create wonders.",
+    "A loving relationship will bring fulfillment and joy.",
+    "Your positive thoughts will manifest into reality.",
+    "An unexpected blessing will brighten your day.",
+    "You have the power to create positive change.",
+    "Your positive energy will attract positive people.",
+    "A new opportunity for growth is emerging.",
+    "Your perseverance will lead to triumph.",
+    "A creative project will bring fulfillment and joy.",
+    "Your kindness will leave a lasting impact.",
+    "Trust the process, and all will unfold as it should.",
+    "You are surrounded by love, joy, and abundance.",
+    "A new friendship will bring laughter and camaraderie.",
+    "Your dreams are the blueprints for your future.",
+        // Your array of fortunes goes here
+    ];
+
+    function spinWheel() {
+        const wheel = document.getElementById('wheel');
+        const fortuneElement = document.getElementById('fortune');
+        const segmentCount = fortunes.length;
+
+        // Select a random fortune
+        const selectedFortuneIndex = Math.floor(Math.random() * segmentCount);
+        const selectedFortune = fortunes[selectedFortuneIndex];
+
+        // Apply rotation directly to the wheel
+        const degree = 360 * (selectedFortuneIndex + 4);
+        const rotation = `rotate(${degree}deg)`;
+
+        wheel.style.transition = 'transform 3s ease-out'; // Adjust the transition duration
+        wheel.style.transform = rotation;
+
+        // Display the selected fortune after the wheel stops spinning
+        setTimeout(() => {
+            fortuneElement.innerText = selectedFortune;
+            wheel.style.transition = 'none'; // Remove transition for instant rotation next time
+        }, 3000); // Adjust this timeout based on the wheel's transition duration
+    }
+</script>
+
+</body>
+</html>
